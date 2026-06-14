@@ -1,0 +1,8 @@
+{
+  "name": "git-tools",
+  "description": "Git helpers for Claude Code. Includes commit-push-sync: after a push, if gh is available, review and (with confirmation) update the GitHub repo description and topics.",
+  "version": "1.0.0",
+  "author": {
+    "name": "kwangsing3"
+  }
+}

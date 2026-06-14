@@ -1,0 +1,13 @@
+{
+  "name": "claude-skills-toolkit",
+  "owner": {
+    "name": "kwangsing3"
+  },
+  "plugins": [
+    {
+      "name": "git-tools",
+      "source": "./plugins/git-tools",
+      "description": "Git helpers, including a commit+push flow that opportunistically syncs GitHub repo description and topics via the gh CLI."
+    }
+  ]
+}
