@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "bash",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/suggest-install.sh\"",
+            "timeout": 10,
+            "statusMessage": "Checking marketplace install state..."
+          }
+        ]
+      }
+    ]
+  }
+}
