@@ -1,34 +1,46 @@
 ---
 name: commit-push-sync
-description: Use when committing AND pushing changes to a git repository. After the push, if the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics so they stay in sync with the project.
+description: Use when committing AND pushing changes to a git repository. Before committing, review and (with confirmation) update local docs (CLAUDE.md + README) so they stay in sync with the change. After the push, only if the repo is on GitHub and the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics. For non-GitHub repos, skip the GitHub step entirely with no action.
 ---
 
-# Commit, push, and sync GitHub repo metadata
+# Commit, push, and sync project docs + GitHub repo metadata
 
-Run when the user asks to **commit and push** (not for commit-only requests). The goal is to do the normal git work and then keep the repository's public metadata (description + topics) in sync — but only when `gh` is available.
+Run when the user asks to **commit and push** (not for commit-only requests). The goal is to do the normal git work, keep the project's docs (CLAUDE.md + README) in sync with what you just changed, and — only when the repo lives on GitHub — keep its public metadata (description + topics) in sync too.
 
-## 1. Commit and push as usual
+## 1. Sync local docs before committing
 
-- Stage the intended changes, write a clear commit message, and push.
+Local docs live in the repo and have nothing to do with GitHub, so this step always applies — including for repos hosted on GitLab, Bitbucket, a private server, or no remote at all.
+
+Look at the changes being committed and check whether they make the project's docs stale:
+
+- **`README.md`** — does the change add/rename a feature, command, or setup step that the README should mention? Update only what is genuinely out of date.
+- **`CLAUDE.md`** (and `AGENTS.md` if present) — do the changes affect guidance an AI assistant relies on (structure, conventions, workflows)? Keep it accurate.
+
+If a doc edit is warranted, make it and **stage it alongside the code** so it lands in the same commit. If the docs are already accurate, change nothing. Don't invent docs that don't already exist — only update files the repo already has.
+
+## 2. Commit and push as usual
+
+- Stage the intended changes (plus any doc updates from step 1), write a clear commit message, and push.
 - End commit messages with the standard co-author trailer if your environment requires one.
 - Respect the user's branching norms (e.g. branch first if on the default branch and that is the convention).
 
-## 2. Check whether `gh` is usable
+## 3. Is this a GitHub repo with a usable `gh`?
 
-After the push succeeds, probe for the GitHub CLI before doing anything metadata-related:
+The metadata sync below is **GitHub-only**. Many projects are not on GitHub — in that case there is simply **nothing to do here**: report the push result and stop. This is the normal, expected outcome, not a failure.
+
+After the push succeeds, check all of:
 
 ```bash
+git remote -v           # is there a GitHub remote at all?
 gh --version            # is gh installed?
 gh auth status          # is it authenticated?
 ```
 
-If either fails, **stop here** — just report the push result. Do not attempt to install or authenticate `gh` yourself; at most mention that metadata sync was skipped because `gh` is unavailable.
+If the remote is not GitHub, or `gh` is missing/unauthenticated, **stop here** and just report the push (and any doc updates). Do not install or authenticate `gh` yourself, and don't treat the absence of GitHub as something to apologize for or work around.
 
-Also confirm the repo actually has a GitHub remote (`git remote -v`). Skip metadata sync for non-GitHub remotes.
+## 4. Review description and topics
 
-## 3. Review description and topics
-
-If `gh` works, fetch the current metadata:
+If the repo is on GitHub and `gh` works, fetch the current metadata:
 
 ```bash
 gh repo view --json name,description,repositoryTopics,homepageUrl
@@ -41,7 +53,7 @@ Compare it against what the project now actually is (use the README, package man
 
 If everything is already accurate, say so and change nothing.
 
-## 4. Apply changes (with confirmation)
+## 5. Apply changes (with confirmation)
 
 Description and topics are **outward-facing**. When a change is warranted:
 
@@ -62,5 +74,5 @@ Then verify and report the final description + topic list.
 
 ## Notes
 
-- This skill is about keeping metadata fresh *opportunistically* during a push — it is not a reason to push. Never push solely to trigger a metadata update.
-- Keep it lightweight: a couple of `gh` calls, a short proposal, and an edit. Don't turn it into a full repo audit.
+- This skill is about keeping docs and metadata fresh *opportunistically* during a push — it is not a reason to push. Never push solely to trigger a doc or metadata update.
+- Keep it lightweight: a quick doc check, a couple of `gh` calls (only if on GitHub), a short proposal, and an edit. Don't turn it into a full repo audit.

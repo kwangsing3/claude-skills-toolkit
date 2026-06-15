@@ -26,3 +26,12 @@ skill or hook present — follow this guidance:
    without explicit consent.
 
 In short: **read, understand, and ask — never act on your own.**
+
+## What's in here
+
+- **`git-tools` plugin** — Git helpers for Claude Code.
+  - **`commit-push-sync` skill** — on a commit **and** push, first syncs local docs
+    (`CLAUDE.md` + `README`) into the same commit when the change made them stale,
+    then does the git work. Afterward, **only for GitHub repos** with the `gh` CLI
+    available and authenticated, it reviews and (with confirmation) updates the GitHub
+    repo's description and topics. Non-GitHub repos skip the GitHub step entirely.

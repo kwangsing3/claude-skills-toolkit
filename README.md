@@ -40,7 +40,7 @@ Update later with `/plugin marketplace update claude-skills-toolkit`.
 
 | Skill | What it does |
 |-------|--------------|
-| `commit-push-sync` | When committing **and** pushing, performs the git work, then — if the `gh` CLI is available and authenticated — reviews the GitHub repo's description and topics and updates them (with confirmation) so metadata stays in sync. |
+| `commit-push-sync` | When committing **and** pushing: first syncs local docs (`CLAUDE.md` + `README`) into the commit if the change made them stale, then performs the git work. Afterward — only for GitHub repos with the `gh` CLI available and authenticated — reviews the GitHub repo's description and topics and updates them (with confirmation) so metadata stays in sync. Non-GitHub repos simply skip the GitHub step. |
 
 ## Structure
 

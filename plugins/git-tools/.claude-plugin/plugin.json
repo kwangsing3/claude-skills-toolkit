@@ -1,7 +1,7 @@
 {
   "name": "git-tools",
-  "description": "Git helpers for Claude Code. Includes commit-push-sync: after a push, if gh is available, review and (with confirmation) update the GitHub repo description and topics.",
-  "version": "1.0.0",
+  "description": "Git helpers for Claude Code. Includes commit-push-sync: sync local docs (CLAUDE.md + README) into the commit, and — only for GitHub repos with gh available — review and (with confirmation) update the GitHub repo description and topics.",
+  "version": "1.1.0",
   "author": {
     "name": "kwangsing3"
   }
