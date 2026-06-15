@@ -40,7 +40,8 @@ Update later with `/plugin marketplace update claude-skills-toolkit`.
 
 | Skill | What it does |
 |-------|--------------|
-| `commit-push-sync` | When committing **and** pushing: first syncs local docs (`CLAUDE.md` + `README`) into the commit if the change made them stale, then performs the git work. Afterward — only for GitHub repos with the `gh` CLI available and authenticated — reviews the GitHub repo's description and topics and updates them (with confirmation) so metadata stays in sync. Non-GitHub repos simply skip the GitHub step. |
+| `commit-push-sync` | When committing **and** pushing: writes each commit in changelog-ready **Conventional Commits** style (`type(scope): subject`, breaking-change markers, semver-aware notes), first syncs local docs (`CLAUDE.md` + `README`) into the commit if the change made them stale, then performs the git work. Afterward — only for GitHub repos with the `gh` CLI available and authenticated — reviews the GitHub repo's description and topics and updates them (with confirmation) so metadata stays in sync. Non-GitHub repos simply skip the GitHub step. (Borrows changelogen's commit-as-source-of-truth philosophy without the changelog/version/tag machinery.) |
+| `changelog-release` | **Opt-in release action** (invoke explicitly). Reads Conventional Commits since the last tag, computes the semver bump (with changelogen's `0.x` drop-a-level rule), bumps the version manifest, and writes/updates `CHANGELOG.md`. Prefers the `changelogen` CLI when available, otherwise generates by hand. Creates the release commit + tag only with confirmation. This is the deliberate counterpart that consumes the clean history `commit-push-sync` produces. |
 
 ## Structure
 
@@ -50,7 +51,8 @@ plugins/
   git-tools/
     .claude-plugin/plugin.json      # plugin manifest
     skills/
-      commit-push-sync/SKILL.md     # the skill
+      commit-push-sync/SKILL.md     # daily commit+push (conventional commits, doc + metadata sync)
+      changelog-release/SKILL.md     # opt-in version bump + CHANGELOG.md generation
 ```
 
 To add more skills, drop another `skills/<name>/SKILL.md` into a plugin (or add a new plugin entry to `marketplace.json`) and bump the plugin `version`.

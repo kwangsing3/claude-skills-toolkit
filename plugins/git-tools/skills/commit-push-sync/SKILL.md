@@ -1,11 +1,11 @@
 ---
 name: commit-push-sync
-description: Use when committing AND pushing changes to a git repository. Before committing, review and (with confirmation) update local docs (CLAUDE.md + README) so they stay in sync with the change. After the push, only if the repo is on GitHub and the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics. For non-GitHub repos, skip the GitHub step entirely with no action.
+description: Use when committing AND pushing changes to a git repository. Writes changelog-ready commits in Conventional Commits style (type(scope): subject, breaking-change markers, semver-aware) so history alone can drive a changelog later. Before committing, review and (with confirmation) update local docs (CLAUDE.md + README) so they stay in sync with the change. After the push, only if the repo is on GitHub and the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics. For non-GitHub repos, skip the GitHub step entirely with no action.
 ---
 
 # Commit, push, and sync project docs + GitHub repo metadata
 
-Run when the user asks to **commit and push** (not for commit-only requests). The goal is to do the normal git work, keep the project's docs (CLAUDE.md + README) in sync with what you just changed, and — only when the repo lives on GitHub — keep its public metadata (description + topics) in sync too.
+Run when the user asks to **commit and push** (not for commit-only requests). The goal is to do the normal git work — writing each commit in changelog-ready Conventional Commits style — keep the project's docs (CLAUDE.md + README) in sync with what you just changed, and — only when the repo lives on GitHub — keep its public metadata (description + topics) in sync too.
 
 ## 1. Sync local docs before committing
 
@@ -18,11 +18,29 @@ Look at the changes being committed and check whether they make the project's do
 
 If a doc edit is warranted, make it and **stage it alongside the code** so it lands in the same commit. If the docs are already accurate, change nothing. Don't invent docs that don't already exist — only update files the repo already has.
 
-## 2. Commit and push as usual
+## 2. Commit and push — write changelog-ready commits
 
-- Stage the intended changes (plus any doc updates from step 1), write a clear commit message, and push.
-- End commit messages with the standard co-author trailer if your environment requires one.
-- Respect the user's branching norms (e.g. branch first if on the default branch and that is the convention).
+Borrowed from `changelogen`'s philosophy: **the commit history is the source of truth**, so every everyday commit should be written well enough that a changelog or release could later be generated from git history alone, with zero manual curation. You are not generating a changelog here — you are just making sure the commit *messages* are clean enough that any tool could.
+
+Stage the intended changes (plus any doc updates from step 1) and write the message in **Conventional Commits** form:
+
+- Header: `type(scope): subject`
+  - **type** (required): `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, `chore` (and `style`).
+  - **scope** (optional): a short lowercase area, e.g. `feat(auth): …`.
+  - **subject**: imperative mood, concise, no trailing period.
+- **Breaking changes**: mark with `!` after the type/scope (`feat!:`) and/or add a `BREAKING CHANGE:` footer explaining the break.
+- If the staged changes cover **multiple unrelated concerns**, prefer splitting them into separate, well-typed commits rather than one mixed commit — mixed commits are what make changelogs messy later.
+- End with the standard co-author trailer if your environment requires one, and respect the user's branching norms (e.g. branch first if on the default branch and that is the convention).
+
+**Stay release-aware (informational only — do NOT act):** after composing the message, note in one line the semver impact the type implies, so the user knows where the history is heading. Do **not** bump the version, write a `CHANGELOG.md`, or create a tag — those stay out of the everyday flow.
+
+| Commit | Implied bump | On `0.x` (drops a level) |
+|--------|--------------|--------------------------|
+| `BREAKING CHANGE` / `type!:` | major | minor |
+| `feat:` | minor | patch |
+| `fix:` and others | patch | patch |
+
+Then push.
 
 ## 3. Is this a GitHub repo with a usable `gh`?
 
@@ -75,4 +93,5 @@ Then verify and report the final description + topic list.
 ## Notes
 
 - This skill is about keeping docs and metadata fresh *opportunistically* during a push — it is not a reason to push. Never push solely to trigger a doc or metadata update.
-- Keep it lightweight: a quick doc check, a couple of `gh` calls (only if on GitHub), a short proposal, and an edit. Don't turn it into a full repo audit.
+- Keep it lightweight: a clean Conventional Commit message, a quick doc check, a couple of `gh` calls (only if on GitHub), a short proposal, and an edit. Don't turn it into a full repo audit.
+- The Conventional Commits styling is the *only* slice of changelog tooling adopted here. Generating `CHANGELOG.md`, bumping versions, and tagging are deliberately **out of scope** — this skill just keeps everyday history clean enough that a dedicated tool (e.g. `changelogen`) could do those later.
