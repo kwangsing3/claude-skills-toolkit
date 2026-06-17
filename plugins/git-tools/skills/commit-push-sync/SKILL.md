@@ -1,6 +1,6 @@
 ---
 name: commit-push-sync
-description: Use when committing AND pushing changes to a git repository. Writes changelog-ready commits in Conventional Commits style (type(scope): subject, breaking-change markers, semver-aware) so history alone can drive a changelog later. Before committing, review and (with confirmation) update local docs (CLAUDE.md + README) so they stay in sync with the change. Tagging is optional and opt-in: only when the user explicitly asks to tag this push, propose a `v<version>` tag (the LLM computes the version from what changed — feature removed = major, existing feature breaks = minor, pure fix = patch, otherwise ordinary semver), confirm it, then create and push the tag with the commit. After the push, only if the repo is on GitHub and the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics — and, when the push carried a tag, create a matching GitHub Release. For non-GitHub repos, skip the GitHub steps entirely with no action.
+description: Use when committing AND pushing changes to a git repository. Writes changelog-ready commits in Conventional Commits style (type(scope): subject, breaking-change markers, semver-aware) so history alone can drive a changelog later. Before committing, review and (with confirmation) update local docs (CLAUDE.md + README) so they stay in sync with the change. Tagging is optional and opt-in: only when the user explicitly asks to tag this push, propose a `v<version>` tag (the LLM computes the version with standard semver — breaking change/removed feature = major, backward-compatible feature = minor, fix = patch), confirm it, then create and push the tag with the commit. After the push, only if the repo is on GitHub and the `gh` CLI is available and authenticated, also review and (with confirmation) update the GitHub repo's description and topics — and, when the push carried a tag, create a matching GitHub Release. For non-GitHub repos, skip the GitHub steps entirely with no action.
 ---
 
 # Commit, push, and sync project docs + GitHub repo metadata
@@ -48,16 +48,15 @@ Tagging is **off by default** — a routine commit+push never creates a tag. Onl
 
 **Tag format is always `v<version>`** (e.g. `v1.4.0`) — a leading `v` followed by the version number, no exceptions.
 
-**Figuring out the version is the LLM's call.** Look at what changed since the last tag (`git describe --tags --abbrev=0` for the current version, then the commits/diff in range) and propose the next version yourself, applying this project's bump rules:
+**Figuring out the version is the LLM's call — use standard [semver](https://semver.org/).** Look at what changed since the last tag (`git describe --tags --abbrev=0` for the current version, then the commits/diff in range) and propose the next version yourself:
 
 | Change since last tag | Bump |
 |-----------------------|------|
-| A feature / capability was **removed** | **major** |
-| An existing feature **breaks** (behavior changes, nothing removed) | **minor** |
-| **Pure fixes**, no functional change | **patch** |
-| Anything these rules don't cover (e.g. a **purely additive** new feature) | fall back to ordinary **semver** judgment |
+| Backward-**incompatible** change — breaking change or a removed feature (`type!:` / `BREAKING CHANGE:`) | **major** |
+| Backward-**compatible** new feature (`feat:`) | **minor** |
+| Backward-**compatible** fix or internal change (`fix:` and others) | **patch** |
 
-Note these rules are *non-standard* (removal outranks a break here), so reason from the actual change rather than the Conventional Commit type alone. Use your judgment for mixed or ambiguous cases, and pre-releases (`-rc.1`, `-beta`) are fine when the user wants one.
+Pick the bump from the highest-impact change in range. (Optional `0.x` convention, matching `changelog-release`: while on `0.y.z` you may drop one level — a breaking change bumps minor, a feature bumps patch.) Pre-releases (`-rc.1`, `-beta`) are fine when the user wants one; use your judgment for mixed or ambiguous cases.
 
 Because a tag (and the Release below) is outward-facing, **propose the computed `v<version>` and confirm it with the user** before creating anything — let them override. Then create an **annotated** tag on the commit you just made and push it with the branch:
 
