@@ -7,7 +7,7 @@
     {
       "name": "git-tools",
       "source": "./plugins/git-tools",
-      "description": "Git helpers, including a commit+push flow that writes changelog-ready Conventional Commits, syncs local docs (CLAUDE.md + README) into the commit, and opportunistically syncs GitHub repo description and topics via the gh CLI (skipped for non-GitHub repos)."
+      "description": "Git helpers, including a commit+push flow that writes changelog-ready Conventional Commits, syncs local docs (CLAUDE.md + README) into the commit, optionally tags the push (opt-in), and opportunistically — via the gh CLI on GitHub repos — cuts a Release for that tag and syncs the repo description and topics (skipped for non-GitHub repos)."
     }
   ]
 }

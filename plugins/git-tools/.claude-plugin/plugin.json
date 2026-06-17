@@ -1,7 +1,7 @@
 {
   "name": "git-tools",
-  "description": "Git helpers for Claude Code. commit-push-sync: write changelog-ready Conventional Commits, sync local docs (CLAUDE.md + README) into the commit, and (GitHub-only, with gh) sync repo description + topics. changelog-release: opt-in version bump + CHANGELOG.md generation from Conventional Commits (prefers changelogen).",
-  "version": "1.3.0",
+  "description": "Git helpers for Claude Code. commit-push-sync: write changelog-ready Conventional Commits, sync local docs (CLAUDE.md + README) into the commit, optionally tag the push (opt-in), and (GitHub-only, with gh) cut a Release for that tag and sync repo description + topics. changelog-release: opt-in version bump + CHANGELOG.md generation from Conventional Commits (prefers changelogen).",
+  "version": "1.4.0",
   "author": {
     "name": "kwangsing3"
   }

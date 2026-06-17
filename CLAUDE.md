@@ -34,11 +34,16 @@ In short: **read, understand, and ask — never act on your own.**
     changelog-ready **Conventional Commits** style (`type(scope): subject`,
     breaking-change markers, an informational semver-impact note), first syncs local
     docs (`CLAUDE.md` + `README`) into the same commit when the change made them stale,
-    then does the git work. Afterward, **only for GitHub repos** with the `gh` CLI
-    available and authenticated, it reviews and (with confirmation) updates the GitHub
-    repo's description and topics. Non-GitHub repos skip the GitHub step entirely.
-    It borrows `changelogen`'s "commit history is the source of truth" philosophy but
-    deliberately does **not** generate a changelog, bump versions, or create tags.
+    then does the git work. **Tagging is opt-in:** only when the user explicitly asks,
+    the LLM proposes a `v<version>` tag — computing the version from what changed
+    (feature removed = major, an existing feature breaks = minor, pure fix = patch,
+    anything else by ordinary semver), confirms it, then creates and pushes it with the
+    commit. Afterward, **only for GitHub repos** with the `gh` CLI available and
+    authenticated, it reviews and (with confirmation) updates the GitHub repo's
+    description and topics — and, when the push carried a tag, cuts a matching **GitHub
+    Release**. Non-GitHub repos skip the GitHub steps entirely. It borrows `changelogen`'s
+    "commit history is the source of truth" philosophy; it creates only the git tag +
+    Release and leaves `CHANGELOG.md` / version-manifest bumps to `changelog-release`.
   - **`changelog-release` skill** — the explicit, opt-in counterpart. When the user asks
     to release / bump / update the changelog, it reads Conventional Commits since the
     last tag, computes the semver bump (with the `0.x` drop-a-level rule), bumps the
