@@ -5,6 +5,17 @@ All notable changes to this project are documented here. Generated from
 [`references/versioning.md`](plugins/git-tools/references/versioning.md) for the
 bump rules.
 
+## v1.5.1 (2026-08-19)
+
+### 🐞 Fixes
+
+- **commit-push-sync:** the Obsidian step gated on `command -v obsidian`, so it stayed
+  dormant for anyone who has a vault but no CLI on `PATH` — the CLI ships with the
+  Obsidian desktop app, not with the Obsidian skills. Detection now triggers on any
+  sign of a vault (an Obsidian skill being available, the CLI, an MCP server, or a
+  `.obsidian/` directory), and access degrades through a ladder: CLI → MCP → reading
+  the vault's markdown files directly.
+
 ## v1.5.0 (2026-08-19)
 
 ### 🚀 Features
