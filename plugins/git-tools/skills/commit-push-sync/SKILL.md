@@ -24,55 +24,77 @@ private server, or no remote at all).
 Update only what is genuinely out of date, and **stage it alongside the code** so it
 lands in the same commit. Don't create docs the repo doesn't already have.
 
-## 2. Sync a linked Obsidian vault (only if one is linked)
+## 2. Sync an Obsidian vault (only if the user has one)
 
 Some projects keep their real documentation in an Obsidian vault rather than in the
-repo. Check for a link — cheaply, and only once:
+repo. Two separate questions, in order: **is Obsidian in play at all**, and **can you
+reach the notes**.
 
-```bash
-command -v obsidian                # is the Obsidian CLI available at all?
-```
+### 2a. Is Obsidian in play?
 
-Then look for evidence that **this project** is associated with a vault:
+Any one of these is enough — check cheaply, and only once:
 
-- a vault inside or beside the repo — a `.obsidian/` directory, or a path configured
-  in `CLAUDE.md` / `.env` / project config;
-- a note that tracks this project — `obsidian search query="<repo name>" limit=10`.
+- an **Obsidian skill is available** to you (e.g. `obsidian-cli`, `obsidian-markdown`
+  from `kepano/obsidian-skills`) — its presence means the user works with a vault,
+  even if the CLI itself is not installed;
+- the **`obsidian` CLI** is on `PATH` (`command -v obsidian`);
+- an **Obsidian MCP server** is connected;
+- a **vault on disk** — a `.obsidian/` directory inside or beside the repo, or a vault
+  path configured in `CLAUDE.md` / `.env` / project config.
 
-**If there is no Obsidian CLI at all, do nothing and move on.** This is the common
-case and is not a failure. Never install the CLI, start Obsidian, or create a vault.
+**If none of these hold, do nothing and move on.** This is the common case and is not
+a failure. Never install the CLI, start Obsidian, or create a vault.
 
-**If the CLI *is* available but nothing ties back to this project**, ask — once, in
-passing — whether the user wants to start tracking this project in their vault. Keep
-it to one line alongside your other output; it is an offer, not a blocker.
+### 2b. Reach the notes with whatever access you have
+
+Do **not** gate on the CLI. Take the highest rung of this ladder that works:
+
+1. **`obsidian` CLI** — preferred; it talks to the running app and respects its index.
+   ```bash
+   obsidian search query="<repo name>" limit=10   # which notes cover this project
+   obsidian read file="<Note>"                    # read before editing
+   obsidian backlinks file="<Note>"               # how it fits the vault's structure
+   ```
+2. **An Obsidian MCP server**, if one is connected — use its read/search tools.
+3. **The filesystem** — a vault is just a folder of markdown, so when you know the
+   vault path but the CLI is unavailable (Obsidian not installed, or not running),
+   read and write the `.md` files directly with your normal file tools. Grep for the
+   repo name to find the relevant notes. Obsidian picks up external edits on its own.
+
+If an Obsidian skill is available, **follow it** for syntax — wikilinks, embeds,
+callouts, properties. It is the authority on Obsidian Flavored Markdown; don't
+improvise a format this skill doesn't specify.
+
+If you can detect a vault but genuinely cannot reach it by any rung (no CLI, no MCP,
+no known path), say so in one line and continue with the push. Don't guess at paths.
+
+### 2c. Nothing tracks this project yet
+
+Ask — once, in passing — whether the user wants to start tracking this project in
+their vault. Keep it to one line alongside your other output; it is an offer, not a
+blocker.
 
 - If they say yes, ask where it belongs (which vault, which folder) and create a
-  single note that follows the conventions of its neighbours, then continue.
+  single note following the conventions of its neighbours, then continue.
 - If they say no, or don't answer, **carry on with the commit and push regardless** —
   never hold up the git work waiting on this, and don't ask again in the same session.
 
-Either way the answer never changes what gets committed.
+### 2d. Update what went stale
 
-If a link *does* exist, inspect the structure before touching anything:
-
-```bash
-obsidian search query="<repo name>" limit=10   # which notes cover this project
-obsidian read file="<Note>"                    # read before editing
-obsidian backlinks file="<Note>"               # how it fits the vault's structure
-```
-
-Judge whether the change you are committing makes those notes stale — a renamed
-command, a new feature, a changed setup step, a decision that supersedes what the
-note records. Follow the vault's existing conventions (folder placement, properties,
-wikilinks, tags); mirror what neighbouring notes do rather than inventing a format.
+Judge whether the change you are committing makes the notes stale — a renamed command,
+a new feature, a changed setup step, a decision that supersedes what the note records.
+Follow the vault's existing conventions (folder placement, properties, wikilinks,
+tags); mirror what neighbouring notes do rather than inventing a format.
 
 Notes are the user's own knowledge base, so **propose the edit and get confirmation
-before writing**. Then apply it:
+before writing**. Then apply it — via the CLI when you have it:
 
 ```bash
 obsidian append file="<Note>" content="..." silent
 obsidian property:set name="updated" value="<YYYY-MM-DD>" file="<Note>"
 ```
+
+— or by editing the note file directly when you don't.
 
 Prefer appending to or editing an existing note over creating a new one, and only
 create one when the user asks. Vault edits are **not** part of the commit — mention

@@ -35,10 +35,12 @@ Each skill's full behaviour lives in its `SKILL.md`; this table is a summary, no
 second copy. Versioning rules for both live in one place —
 [`references/versioning.md`](plugins/git-tools/references/versioning.md).
 
-The Obsidian step is optional and self-disabling: without the
-[Obsidian CLI](https://help.obsidian.md/cli) it does nothing at all. If the CLI is
-there but no note tracks the project, it offers once to start tracking it — and
-pushes either way.
+The Obsidian step is optional and self-disabling. It triggers on *any* sign that the
+user works with a vault — an Obsidian skill being available, the
+[Obsidian CLI](https://help.obsidian.md/cli), an MCP server, or a vault on disk — and
+reaches the notes by whichever of those actually works, falling back to reading the
+`.md` files directly. With no sign of Obsidian it does nothing at all; when the
+project isn't tracked yet it offers once, and pushes either way.
 
 ## Structure
 
