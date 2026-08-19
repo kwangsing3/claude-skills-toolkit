@@ -1,0 +1,79 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON manifests
+        run: |
+          fail=0
+          for f in $(find . -path ./.git -prune -o -name '*.json' -print); do
+            if ! jq empty "$f" 2>/dev/null; then
+              echo "::error file=$f::invalid JSON"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Check marketplace catalog
+        run: |
+          jq -e '.name and .owner.name and (.plugins | length > 0)' \
+            .claude-plugin/marketplace.json > /dev/null
+          fail=0
+          for src in $(jq -r '.plugins[].source' .claude-plugin/marketplace.json); do
+            manifest="$src/.claude-plugin/plugin.json"
+            if [ ! -f "$manifest" ]; then
+              echo "::error::marketplace entry '$src' has no $manifest"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Check plugin manifests
+        run: |
+          fail=0
+          for m in $(find plugins -name plugin.json); do
+            jq -e '.name and .description and .version' "$m" > /dev/null || {
+              echo "::error file=$m::missing name, description, or version"; fail=1; }
+            v=$(jq -r .version "$m")
+            echo "$v" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$' || {
+              echo "::error file=$m::version '$v' is not semver"; fail=1; }
+          done
+          exit $fail
+
+      - name: Check SKILL.md frontmatter
+        run: |
+          fail=0
+          for s in $(find plugins -name SKILL.md); do
+            head -1 "$s" | grep -qx -- '---' || {
+              echo "::error file=$s::must start with a --- frontmatter fence"; fail=1; continue; }
+            fm=$(awk 'NR>1 && /^---$/{exit} NR>1' "$s")
+            echo "$fm" | grep -qE '^name:[[:space:]]*\S' || {
+              echo "::error file=$s::frontmatter missing 'name'"; fail=1; }
+            echo "$fm" | grep -qE '^description:[[:space:]]*\S' || {
+              echo "::error file=$s::frontmatter missing 'description'"; fail=1; }
+            name=$(echo "$fm" | sed -n 's/^name:[[:space:]]*//p')
+            dir=$(basename "$(dirname "$s")")
+            [ "$name" = "$dir" ] || {
+              echo "::error file=$s::name '$name' does not match directory '$dir'"; fail=1; }
+          done
+          exit $fail
+
+      - name: Check referenced files exist
+        run: |
+          fail=0
+          for s in $(find plugins -name SKILL.md); do
+            root=$(dirname "$(dirname "$(dirname "$s")")")
+            for ref in $(grep -oE '\$\{CLAUDE_PLUGIN_ROOT\}/[A-Za-z0-9_./-]+' "$s" | sort -u); do
+              path="$root/${ref#\$\{CLAUDE_PLUGIN_ROOT\}/}"
+              [ -e "$path" ] || { echo "::error file=$s::missing reference $path"; fail=1; }
+            done
+          done
+          exit $fail
