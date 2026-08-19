@@ -30,6 +30,15 @@ user runs the slash commands. If they decline, drop it.
 - `.github/workflows/validate.yml` checks the manifests, the `SKILL.md` frontmatter,
   and that every `${CLAUDE_PLUGIN_ROOT}/…` reference resolves. Run its steps locally
   before pushing structural changes.
+- **The working copy is not the version you are running.** Claude Code loads this
+  plugin from `~/.claude/plugins/cache/claude-skills-toolkit/git-tools/<version>/`,
+  not from this repo. Editing a `SKILL.md` here changes nothing about your own
+  behaviour until the user runs `/plugin marketplace update claude-skills-toolkit`
+  and the session picks up the new version. So when you invoke one of this plugin's
+  own skills while working in this repo, first compare the installed version
+  (`ls ~/.claude/plugins/cache/claude-skills-toolkit/git-tools/`) against
+  `plugin.json`, and **say which one you are actually following**. Never assume they
+  match, and never report having run a step that only exists in the working copy.
 
 ## What's in here
 
