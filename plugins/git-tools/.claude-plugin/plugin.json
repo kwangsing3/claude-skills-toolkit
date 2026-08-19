@@ -1,7 +1,7 @@
 {
   "name": "git-tools",
   "description": "Git helpers for Claude Code: changelog-ready Conventional Commits with doc/note/metadata sync, plus an opt-in version bump and CHANGELOG generator.",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "author": {
     "name": "kwangsing3"
   },
