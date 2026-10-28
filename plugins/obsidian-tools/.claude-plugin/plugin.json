@@ -1,0 +1,19 @@
+{
+  "name": "obsidian-tools",
+  "description": "Obsidian vault workflows for Claude Code: turn a repo into a standard project note, ingest dropped files into index + requirement notes, work an open-questions list, and run the whole daily review.",
+  "version": "0.1.0",
+  "author": {
+    "name": "kwangsing3"
+  },
+  "homepage": "https://github.com/kwangsing3/claude-skills-toolkit",
+  "repository": "https://github.com/kwangsing3/claude-skills-toolkit",
+  "license": "MIT",
+  "keywords": [
+    "obsidian",
+    "notes",
+    "knowledge-base",
+    "requirements",
+    "daily-review",
+    "canvas"
+  ]
+}

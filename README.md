@@ -13,6 +13,7 @@ to reuse my skills across machines and Claude surfaces.
 ```
 /plugin marketplace add kwangsing3/claude-skills-toolkit
 /plugin install git-tools@claude-skills-toolkit
+/plugin install obsidian-tools@claude-skills-toolkit
 ```
 
 Update later with `/plugin marketplace update claude-skills-toolkit`.
@@ -42,6 +43,28 @@ reaches the notes by whichever of those actually works, falling back to reading 
 `.md` files directly. With no sign of Obsidian it does nothing at all; when the
 project isn't tracked yet it offers once, and pushes either way.
 
+### `obsidian-tools`
+
+Workflows for operating **on** an Obsidian vault, built on one idea: the vault's own
+`CLAUDE.md` is the source of truth, and the skills read it rather than hardcoding a
+folder layout. A skill that assumes `10-projects/` exists will create it in the next
+vault it runs in.
+
+| Skill | Command | What it does |
+|-------|---------|--------------|
+| [`vault-project-note`](plugins/obsidian-tools/skills/vault-project-note/SKILL.md) | `/project-note` | Turns a repo into a standard project note — git metadata from the actual remote and `HEAD`, stack from real manifests, a plain-language purpose section, and the vault's canvas set. Refreshing an unchanged repo changes nothing. |
+| [`vault-drop-ingest`](plugins/obsidian-tools/skills/vault-drop-ingest/SKILL.md) | — | Turns dropped emails, Office files and HTML reports into an index note plus separate requirement notes. Explores structure before reading — the content of an HTML report is usually the JSON in its `<script>`, not the visible text. |
+| [`vault-open-questions`](plugins/obsidian-tools/skills/vault-open-questions/SKILL.md) | — | A protocol for not guessing. Parks undecidables with a stated *default if unanswered*, then classifies each answer as fact / instruction / non-answer and acts accordingly. Not Obsidian-specific. |
+| [`vault-daily-review`](plugins/obsidian-tools/skills/vault-daily-review/SKILL.md) | `/daily-review` | Sequences the other three, adds repo and forge scanning, and verifies issues against the source code before believing them done. Writes one line when nothing changed. |
+
+Two rules the plugin treats as non-negotiable, both in
+[`references/safety.md`](plugins/obsidian-tools/references/safety.md): **notes are
+archived, never deleted**, and **an unattended run never closes an issue** — that
+notifies colleagues off a judgement inferred from commit messages.
+
+> `obsidian-tools` deliberately does **not** sync notes as a side effect of a git
+> operation — that's `git-tools`' `commit-push-sync`. One job, one entry point.
+
 ## Structure
 
 ```
@@ -55,10 +78,26 @@ plugins/
     skills/
       commit-push-sync/SKILL.md
       changelog-release/SKILL.md
+  obsidian-tools/
+    .claude-plugin/plugin.json       # plugin manifest
+    commands/                        # explicit slash-command entry points
+    references/
+      vault-conventions.md           # how to read a vault's CLAUDE.md
+      safety.md                      # preconditions for every destructive step
+    skills/
+      vault-project-note/SKILL.md
+      vault-drop-ingest/SKILL.md
+      vault-open-questions/SKILL.md
+      vault-daily-review/SKILL.md
 ```
 
 To add a skill, drop another `skills/<name>/SKILL.md` into a plugin (or add a plugin
 entry to `marketplace.json`) and bump the plugin `version`.
+
+Each plugin carries its own `version` in its own `plugin.json`. `${CLAUDE_PLUGIN_ROOT}`
+resolves per plugin, so a `references/` file can only be shared **within** a plugin —
+cross-plugin agreements (like the Obsidian boundary above) are stated in prose in both
+places instead.
 
 ## License
 

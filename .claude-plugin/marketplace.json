@@ -8,6 +8,11 @@
       "name": "git-tools",
       "source": "./plugins/git-tools",
       "description": "Git helpers for Claude Code: changelog-ready Conventional Commits with doc/note/metadata sync, plus an opt-in version bump and CHANGELOG generator."
+    },
+    {
+      "name": "obsidian-tools",
+      "source": "./plugins/obsidian-tools",
+      "description": "Obsidian vault workflows for Claude Code: turn a repo into a standard project note, ingest dropped files into index + requirement notes, work an open-questions list, and run the whole daily review."
     }
   ]
 }

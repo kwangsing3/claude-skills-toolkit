@@ -11,6 +11,7 @@ user runs the slash commands. If they decline, drop it.
 ```
 /plugin marketplace add kwangsing3/claude-skills-toolkit
 /plugin install git-tools@claude-skills-toolkit
+/plugin install obsidian-tools@claude-skills-toolkit
 ```
 
 ## If you are working *on* this repository
@@ -22,6 +23,11 @@ user runs the slash commands. If they decline, drop it.
   tag format, bump table, the mandatory `0.x` drop-a-level rule, and where the
   current version is read from. Both skills read that one file so they can never
   disagree. Never restate a bump table inside a `SKILL.md`.
+- **`${CLAUDE_PLUGIN_ROOT}` resolves per plugin**, so a `references/` file cannot be
+  shared across plugins. `obsidian-tools` has its own `references/`. Where the two
+  plugins have to agree on something — notably that `obsidian-tools` never does
+  commit-time note sync, because `commit-push-sync` already owns that — the agreement
+  is stated in prose on both sides. If you change one side, change the other.
 - A `SKILL.md` frontmatter `description` is loaded into context every session. It
   states *when to trigger the skill*, in two or three sentences — details belong in
   the body.
@@ -46,3 +52,12 @@ user runs the slash commands. If they decline, drop it.
   - `commit-push-sync` — the everyday commit+push flow.
   - `changelog-release` — the deliberate, opt-in version bump + changelog. Never
     invoke it as part of a routine commit+push.
+- **`obsidian-tools` plugin** — see `plugins/obsidian-tools/skills/*/SKILL.md`.
+  - `vault-project-note` — repo → standard project note (and refresh).
+  - `vault-drop-ingest` — dropped source material → index note + requirement notes.
+  - `vault-open-questions` — the park-a-question / process-an-answer protocol.
+  - `vault-daily-review` — orchestrates the three above plus repo and forge scanning.
+  - Both `references/` files are preconditions, not appendices: `safety.md` is read
+    before any destructive step, `vault-conventions.md` before writing any note. Two
+    rules there are absolute — **archive, never delete a note**, and **an unattended
+    run never closes a forge issue**.
