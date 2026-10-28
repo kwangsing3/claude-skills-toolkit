@@ -1,5 +1,7 @@
 # claude-skills-toolkit
 
+**English** | [繁體中文](README.zh-TW.md)
+
 A personal [Claude Code](https://code.claude.com) plugin marketplace — a portable way
 to reuse my skills across machines and Claude surfaces.
 
@@ -57,10 +59,11 @@ vault it runs in.
 | [`vault-open-questions`](plugins/obsidian-tools/skills/vault-open-questions/SKILL.md) | — | A protocol for not guessing. Parks undecidables with a stated *default if unanswered*, then classifies each answer as fact / instruction / non-answer and acts accordingly. Not Obsidian-specific. |
 | [`vault-daily-review`](plugins/obsidian-tools/skills/vault-daily-review/SKILL.md) | `/daily-review` | Sequences the other three, adds repo and forge scanning, and verifies issues against the source code before believing them done. Writes one line when nothing changed. |
 
-Two rules the plugin treats as non-negotiable, both in
+Rules the plugin treats as non-negotiable, all in
 [`references/safety.md`](plugins/obsidian-tools/references/safety.md): **notes are
-archived, never deleted**, and **an unattended run never closes an issue** — that
-notifies colleagues off a judgement inferred from commit messages.
+archived, never deleted**; **an unattended run never closes an issue** — that
+notifies colleagues off a judgement inferred from commit messages; and **a new issue
+is opened only when the user asks for one in conversation**.
 
 > `obsidian-tools` deliberately does **not** sync notes as a side effect of a git
 > operation — that's `git-tools`' `commit-push-sync`. One job, one entry point.

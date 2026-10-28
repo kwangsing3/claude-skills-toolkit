@@ -19,6 +19,8 @@ user runs the slash commands. If they decline, drop it.
 - **Skill behaviour is documented in the `SKILL.md` files, and nowhere else.** The
   manifests (`marketplace.json`, `plugin.json`) and the README carry one-line
   summaries only. Don't copy a skill's full behaviour into them — it will drift.
+- **`README.md` and `README.zh-TW.md` are translations of each other.** Change one,
+  change the other in the same commit.
 - **All versioning rules live in `plugins/git-tools/references/versioning.md`** —
   tag format, bump table, the mandatory `0.x` drop-a-level rule, and where the
   current version is read from. Both skills read that one file so they can never
