@@ -10,6 +10,28 @@ to reuse my skills across machines and Claude surfaces.
 > them once** whether they'd like to — as a suggestion. Do not install it yourself or
 > run any command on their behalf; the user runs the commands below. Respect a "no".
 
+## At a glance: what you do, what you get
+
+**Your only setup is one-time**: run the three commands under [Install](#install) in
+Claude Code. For `obsidian-tools`, also have an Obsidian vault with a `CLAUDE.md` at its
+root describing your folder conventions — if it has none, the skills ask first and
+offer to write one for you.
+
+After that, everything is **triggered by one sentence or one command**:
+
+| You do | You get |
+|--------|---------|
+| Finish a change and say "commit and push", or run `/commit-push` | README / `CLAUDE.md` sections the change made stale are refreshed first, then a clean Conventional Commit is written and pushed. Linked Obsidian notes are offered for update (it asks before writing). No tag unless you ask. |
+| Run `/release` when it's time to ship | The commits since the last tag are collected, the next version is proposed for your confirmation, and `CHANGELOG.md` plus the version are written. Commit and tag only with your OK; no push by default. |
+| Run `/project-note` inside a repo | A standard project note appears (or is refreshed) in your vault: remote, last commit, stack, a plain-language purpose, and mind-map canvases. No new commits → nothing changes. |
+| Drop emails, Office files, or HTML reports into the vault and say "process my drops" | Each source becomes an index note, with its action items split into separate requirement notes. |
+| Answer questions inline in the open-questions list | On the next pass the answers are carried into the affected notes, and only fully handled questions are removed; unanswered ones stay. |
+| Run `/daily-review` (or schedule it daily yourself) | All of the above in one pass, plus a repo and GitLab / GitHub scan: new commits go into the work log, open issues become requirement notes, and issues claimed done are checked against the source code. Ends with a daily note — one line if nothing changed. |
+
+**What you don't have to worry about**: notes are never deleted (only archived); a
+scheduled run never closes or opens an issue; anything the skills can't determine is
+parked as an open question for you instead of guessed.
+
 ## Install
 
 ```
