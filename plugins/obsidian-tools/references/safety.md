@@ -29,6 +29,23 @@ Repos the vault documents are **read-only**. Read `git log`, manifests, and sour
 fill in note metadata; never write into them. If a task seems to require writing to a
 repo, stop and ask — the user's authorization has to be explicit and scoped.
 
+## Forge writes are tiered
+
+The vault's forge token (GitLab / GitHub) can usually write, but not every write is
+equal. Read the vault's own `CLAUDE.md` for its exact table; absent one, use this:
+
+| Write | Who may trigger it | Why |
+| --- | --- | --- |
+| **Comment on an issue** | An unattended run may | Reversible, no state-change notification; mark it so a rerun updates instead of reposting |
+| **Close an issue, change title / labels / assignee** | Only the user, confirmed in conversation | Notifies colleagues, and the judgement was inferred from commits |
+| **Open a new issue** | Only when the user asks for it in conversation | Notifies project members; what gets filed and how it is worded is the user's call |
+
+When opening an issue: check for an open issue with the same title first and report
+it instead of filing a duplicate, and leave labels and assignees unset unless the
+user names them. A request to file an issue can come from any project, not only
+during a vault review — use the vault's forge tooling rather than improvising API
+calls with a token you went looking for.
+
 ## Do not overwrite a file the user is editing
 
 Obsidian vaults are usually on a sync service (OneDrive, iCloud, Obsidian Sync).

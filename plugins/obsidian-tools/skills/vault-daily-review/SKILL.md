@@ -68,6 +68,9 @@ and issues and wikis have no local copy at all.
   updated, not only on push. Don't report it as new commits — check the commit list.
   A comment you posted yesterday will make every project you touched look active.
 - If the token lacks a scope, record which one **once**. Don't re-ask daily.
+- **Never open an issue from a review.** A gap the review finds is an open question
+  or an action suggestion; filing it on the forge is the user's decision (see the
+  forge-write tiers in `references/safety.md`).
 
 ## 5. Verify issue completion against the source code
 
